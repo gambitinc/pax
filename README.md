@@ -23,7 +23,7 @@ A Model Context Protocol (MCP) server that scans local servers for security vuln
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/pax-mcp
+git clone https://github.com/gambitinc/pax
 cd pax-mcp
 ```
 
