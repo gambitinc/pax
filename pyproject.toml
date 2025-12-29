@@ -1,8 +1,8 @@
 [project]
-name = "pax-mcp"
+name = "pax"
 version = "0.1.0"
 description = "MCP server for scanning local servers for security vulnerabilities"
-authors = [{name = "Your Name", email = "your.email@example.com"}]
+authors = [{name = "Dhilan", email = "atx.dhilan@gmail.com"}]
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -34,9 +34,9 @@ dependencies = [
 pax-mcp = "server:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/pax-mcp"
-Repository = "https://github.com/yourusername/pax-mcp"
-Issues = "https://github.com/yourusername/pax-mcp/issues"
+Homepage = "https://github.com/gambitinc/pax"
+Repository = "https://github.com/gambitinc/pax"
+Issues = "https://github.com/gambitinc/pax/issues"
 
 [build-system]
 requires = ["hatchling"]
