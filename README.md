@@ -27,14 +27,16 @@ git clone https://github.com/yourusername/pax-mcp
 cd pax-mcp
 ```
 
-2. Install the MCP server to Claude Desktop:
+2. Install the MCP server:
 ```bash
-fastmcp install pax-vulnerabilities-server server.py
+uv run --with fastmcp fastmcp install claude-code --project . server.py
 ```
+
+This command works for `claude-code`, `claude-desktop`, and `cursor`.
 
 This automatically:
 - Installs all dependencies
-- Adds the server to your Claude Desktop configuration
+- Adds the server to your configuration
 - Sets up the proper environment
 
 ## Configuration
