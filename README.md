@@ -24,7 +24,7 @@ A Model Context Protocol (MCP) server that scans local servers for security vuln
 1. Clone the repository:
 ```bash
 git clone https://github.com/gambitinc/pax
-cd pax-mcp
+cd pax
 ```
 
 2. Install the MCP server:
