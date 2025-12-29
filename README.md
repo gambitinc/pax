@@ -16,7 +16,7 @@ A Model Context Protocol (MCP) server that scans local servers for security vuln
 ### Prerequisites
 
 - Python 3.10 or higher
-- [uv](https://docs.astral.sh/uv/) package manager (or pip)
+- [uv](https://docs.astral.sh/uv/) package manager 
 - Ngrok account and auth token (get one at [ngrok.com](https://ngrok.com))
 
 ### Quick Install (Recommended)
@@ -41,21 +41,7 @@ This automatically:
 
 ## Configuration
 
-### 1. Set up your Ngrok auth token
-
-Create a `.env` file in the project directory:
-
-```bash
-NGROK_AUTHTOKEN=your_ngrok_token_here
-```
-
-Or set it as an environment variable:
-
-```bash
-export NGROK_AUTHTOKEN=your_ngrok_token_here
-```
-
-### 2. Configure Claude Desktop
+### 1. Configure Claude Desktop
 
 The `fastmcp install` command automatically adds the server to your Claude Desktop configuration.
 
@@ -82,7 +68,6 @@ Add your Ngrok token to the `pax-vulnerabilities-server` entry:
 }
 ```
 
-Alternatively, set the token as a system environment variable and it will be picked up automatically.
 
 ## Usage
 
@@ -131,26 +116,6 @@ This returns details about each scan level, what tests they include, and estimat
 }
 ```
 
-## Requirements
-
-This MCP server requires a running scanner API at `http://0.0.0.0:8080` that accepts requests in the format:
-```
-GET /scan/{level}/{tunnel_url}
-```
-
-Make sure your scanner service is running before using this MCP server.
-
-## Development
-
-### Running locally for testing
-
-```bash
-# Install dependencies
-uv sync
-
-# Run the server directly
-uv run server.py
-```
 
 ### Testing with Claude Desktop
 
