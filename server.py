@@ -7,10 +7,17 @@ from enum import Enum
 
 load_dotenv()
 
+PAX_API_KEY = os.getenv("PAX_API_KEY")
+
 mcp = FastMCP(
-    name="pax-vulnerabilities-server",
+    name="pax-understanding-server",
     instructions="""
-        This server scans local servers for security vulnerabilities.
+        This server 
+        1) Scans local servers for security vulnerabilities
+        2) Develops a system 
+
+
+        For security scans: 
 
         Available scan levels:
         - low: Quick reconnaissance (~2-5 seconds) - headers + basic endpoint discovery
@@ -60,7 +67,8 @@ async def scan(port_num: int, level: str = "medium") -> dict:
 
         # Call the scanner API with the appropriate level
         scanner_url = f"https://vulnerability-scanner-three.vercel.app/scan/{level}/{tunnel_url}"
-        response = requests.get(scanner_url, timeout=120)
+        headers = {"Authorization": f"Bearer {PAX_API_KEY}"}
+        response = requests.get(scanner_url, headers=headers, timeout=120)
 
         result = response.json()
         result["tunnel_url"] = tunnel_url
