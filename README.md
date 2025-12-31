@@ -24,48 +24,20 @@ If we lose interest in the things we create, focusing only on the ends and not t
 
 - Python 3.10+
 - [uv](https://docs.astral.sh/uv/) package manager
-- [Ngrok](https://ngrok.com) account
-- [PaxNet](https://paxnet.dev) account
+- [Ngrok](https://ngrok.com) account - copy your authtoken from the dashboard
+- [PaxNet](https://paxnet.dev) account - create a project and generate an API key
 
-### Quick Install
+### Install
 
 ```bash
 git clone https://github.com/gambitinc/pax
 cd pax
-uv run --with fastmcp fastmcp install claude-code --project . server.py
+uv run --with fastmcp fastmcp install claude-code server.py \
+  --env NGROK_AUTHTOKEN=your_ngrok_token \
+  --env PAX_API_KEY=pax_your_api_key
 ```
 
-Works with `claude-code`, `claude-desktop`, and `cursor`.
-
-## Configuration
-
-### 1. Get Your Keys
-
-**Ngrok:** Sign up at [ngrok.com](https://ngrok.com) → copy your authtoken
-
-**PaxNet:** Sign up at [paxnet.dev](https://paxnet.dev) → create a project → generate API key
-
-### 2. Add to Config
-
-Open your config file:
-- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
-- **Linux**: `~/.config/Claude/claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "pax-vulnerabilities-server": {
-      "command": "uv",
-      "args": ["run", "--directory", "/path/to/pax", "server.py"],
-      "env": {
-        "NGROK_AUTHTOKEN": "your_ngrok_token",
-        "PAX_API_KEY": "pax_your_api_key"
-      }
-    }
-  }
-}
-```
+Replace `claude-code` with `claude-desktop` or `cursor` depending on your client.
 
 ## Usage
 
