@@ -1,129 +1,228 @@
 from fastmcp import FastMCP
-import ngrok
 from dotenv import load_dotenv
 import os
 import requests
 from enum import Enum
+from typing import Optional
 
 load_dotenv()
 
 PAX_API_KEY = os.getenv("PAX_API_KEY")
+REPORT_API_URL = "https://pax-report.vercel.app"
 
 mcp = FastMCP(
-    name="pax-understanding-server",
+    name="pax-report",
     instructions="""
-        This server 
-        1) Scans local servers for security vulnerabilities
-        2) Develops a system 
+        This server tracks development activity and generates personalized learning reports.
 
+        Use the report_update tool every time you make a substantive update to the codebase.
+        This includes:
+        - Writing new code or features
+        - Fixing bugs
+        - Reviewing or refactoring code
+        - Learning new concepts
 
-        For security scans: 
+        The updates are used to generate personalized tutorials tailored to the user's
+        skill level and the concepts they've been working with.
 
-        Available scan levels:
-        - low: Quick reconnaissance (~2-5 seconds) - headers + basic endpoint discovery
-        - medium: Standard scan (~10-30 seconds) - adds SQL injection + XSS testing
-        - high: Full audit (~30-60+ seconds) - adds fuzzing + AI analysis
-
-        Choose the appropriate level based on time constraints and thoroughness needed.
+        Examples of when to call report_update:
+        - After implementing a new function or component
+        - After fixing a bug or issue
+        - After completing a code review
+        - After refactoring existing code
+        - After explaining or learning a new concept
     """,
 )
 
 
-class ScanLevel(str, Enum):
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
+class UpdateType(str, Enum):
+    CODE_WRITTEN = "code_written"
+    BUG_FIX = "bug_fix"
+    CODE_REVIEW = "code_review"
+    LEARNING = "learning"
+    REFACTORING = "refactoring"
 
 
 @mcp.tool()
-async def scan(port_num: int, level: str = "medium") -> dict:
+async def report_update(
+    update_type: str,
+    description: str,
+    files_changed: Optional[list[str]] = None,
+    concepts: Optional[list[str]] = None,
+    code_snippet: Optional[str] = None,
+) -> dict:
     """
-    Scan a local port for security vulnerabilities.
+    Report a substantive development update for learning tracking.
+
+    Call this tool every time you make a meaningful change to the codebase.
+    Updates are used to generate personalized tutorials based on the user's
+    skill level and demonstrated concepts.
 
     Args:
-        port_num: The local port number where the server is running
-        level: Scan intensity - "low" (fast), "medium" (standard), or "high" (comprehensive)
+        update_type: Type of update - one of:
+            - "code_written": New code, features, or components
+            - "bug_fix": Bug fixes or issue resolutions
+            - "code_review": Code review or analysis
+            - "learning": New concept learned or explained
+            - "refactoring": Code restructuring or improvements
+        description: Brief description of what was done (1-3 sentences)
+        files_changed: List of file paths that were modified (optional)
+        concepts: List of programming concepts involved, e.g. ["async/await", "error handling"] (optional)
+        code_snippet: Relevant code snippet if applicable (optional, max 500 chars)
 
     Returns:
-        Vulnerability scan results with findings categorized by severity
+        Confirmation of the update being recorded
+
+    Examples:
+        # After implementing a new feature
+        report_update(
+            update_type="code_written",
+            description="Implemented user authentication with JWT tokens",
+            files_changed=["src/auth/login.py", "src/auth/tokens.py"],
+            concepts=["JWT", "authentication", "middleware"]
+        )
+
+        # After fixing a bug
+        report_update(
+            update_type="bug_fix",
+            description="Fixed race condition in database connection pool",
+            files_changed=["src/db/pool.py"],
+            concepts=["concurrency", "connection pooling", "async"]
+        )
+
+        # After a code review
+        report_update(
+            update_type="code_review",
+            description="Reviewed error handling patterns and suggested improvements",
+            concepts=["error handling", "try/except", "logging"]
+        )
+
+        # After learning something new
+        report_update(
+            update_type="learning",
+            description="Explained how React hooks work and when to use useEffect vs useMemo",
+            concepts=["React hooks", "useEffect", "useMemo", "memoization"]
+        )
+
+        # After refactoring
+        report_update(
+            update_type="refactoring",
+            description="Extracted common validation logic into reusable utility functions",
+            files_changed=["src/utils/validation.py", "src/api/handlers.py"],
+            concepts=["DRY principle", "utility functions", "code organization"]
+        )
     """
-    # Validate scan level
-    valid_levels = ["low", "medium", "high"]
-    if level not in valid_levels:
+    # Validate update type
+    valid_types = ["code_written", "bug_fix", "code_review", "learning", "refactoring"]
+    if update_type not in valid_types:
         return {
-            "error": f"Invalid scan level '{level}'. Must be one of: {valid_levels}",
-            "valid_levels": {
-                "low": "Quick reconnaissance (~2-5 seconds)",
-                "medium": "Standard vulnerability scan (~10-30 seconds)",
-                "high": "Comprehensive audit with AI analysis (~30-60+ seconds)"
+            "error": f"Invalid update_type '{update_type}'. Must be one of: {valid_types}",
+            "valid_types": {
+                "code_written": "New code, features, or components",
+                "bug_fix": "Bug fixes or issue resolutions",
+                "code_review": "Code review or analysis",
+                "learning": "New concept learned or explained",
+                "refactoring": "Code restructuring or improvements"
             }
         }
 
-    listener = None
+    # Build the payload
+    payload = {
+        "type": update_type,
+        "description": description,
+    }
+
+    if files_changed:
+        payload["files_changed"] = files_changed
+
+    if concepts:
+        payload["concepts"] = concepts
+
+    if code_snippet:
+        # Truncate code snippet if too long
+        payload["code_snippet"] = code_snippet[:500] if len(code_snippet) > 500 else code_snippet
+
     try:
-        # Create ngrok tunnel to expose local port
-        listener = await ngrok.forward(port_num, authtoken_from_env=True)
-        tunnel_url = listener.url()
+        # Call the report API
+        response = requests.post(
+            f"{REPORT_API_URL}/ingest/updates",
+            json={
+                "source": "claude-code",
+                "payload": payload
+            },
+            headers={"Authorization": f"Bearer {PAX_API_KEY}"},
+            timeout=30
+        )
 
-        # Call the scanner API with the appropriate level
-        scanner_url = f"https://vulnerability-scanner-three.vercel.app/scan/{level}/{tunnel_url}"
-        headers = {"Authorization": f"Bearer {PAX_API_KEY}"}
-        response = requests.get(scanner_url, headers=headers, timeout=120)
-
-        result = response.json()
-        result["tunnel_url"] = tunnel_url
-        result["local_port"] = port_num
-
-        return result
+        if response.status_code == 200:
+            result = response.json()
+            return {
+                "success": True,
+                "message": "Update recorded successfully",
+                "update_id": result.get("update_id"),
+                "update_type": update_type,
+                "description": description
+            }
+        elif response.status_code == 401:
+            return {
+                "error": "Authentication failed. Check your PAX_API_KEY.",
+                "status_code": response.status_code
+            }
+        else:
+            return {
+                "error": f"Failed to record update: {response.text}",
+                "status_code": response.status_code
+            }
 
     except requests.exceptions.Timeout:
         return {
-            "error": "Scan timed out. Try a lower intensity scan level.",
-            "port": port_num,
-            "level": level
+            "error": "Request timed out while recording update.",
+            "update_type": update_type
         }
     except Exception as e:
         return {
-            "error": f"Error scanning for vulnerabilities: {str(e)}",
-            "port": port_num,
-            "level": level
+            "error": f"Error recording update: {str(e)}",
+            "update_type": update_type
         }
-    finally:
-        # Always close the ngrok tunnel after scanning
-        if listener is not None:
-            await listener.close()
 
 
 @mcp.tool()
-async def get_scan_options() -> dict:
+async def get_update_types() -> dict:
     """
-    Get available scan levels and their descriptions.
+    Get available update types and their descriptions.
 
     Returns:
-        Dictionary describing each scan level, what tests it includes, and estimated time.
+        Dictionary describing each update type and when to use it.
     """
     return {
-        "scan_levels": {
-            "low": {
-                "description": "Quick reconnaissance scan",
-                "tests": ["security_headers", "quick_endpoint_discovery"],
-                "estimated_time": "2-5 seconds",
-                "use_case": "Fast initial assessment, time-constrained situations"
+        "update_types": {
+            "code_written": {
+                "description": "New code, features, or components",
+                "when_to_use": "After implementing new functionality, adding features, or creating new files",
+                "example": "Implemented user registration form with validation"
             },
-            "medium": {
-                "description": "Standard vulnerability testing",
-                "tests": ["security_headers", "endpoint_discovery", "sql_injection", "xss"],
-                "estimated_time": "10-30 seconds",
-                "use_case": "Regular security checks, balanced thoroughness"
+            "bug_fix": {
+                "description": "Bug fixes or issue resolutions",
+                "when_to_use": "After identifying and fixing a bug or resolving an issue",
+                "example": "Fixed null pointer exception in user profile loader"
             },
-            "high": {
-                "description": "Comprehensive security audit",
-                "tests": ["security_headers", "endpoint_discovery", "sql_injection", "xss", "fuzzing", "ai_analysis"],
-                "estimated_time": "30-60+ seconds",
-                "use_case": "Full security audit, production deployments"
+            "code_review": {
+                "description": "Code review or analysis",
+                "when_to_use": "After reviewing code quality, patterns, or suggesting improvements",
+                "example": "Reviewed authentication flow and identified security improvements"
+            },
+            "learning": {
+                "description": "New concept learned or explained",
+                "when_to_use": "After explaining a concept, answering questions, or teaching new skills",
+                "example": "Explained async/await patterns and common pitfalls"
+            },
+            "refactoring": {
+                "description": "Code restructuring or improvements",
+                "when_to_use": "After reorganizing code, improving structure, or cleaning up",
+                "example": "Extracted common API logic into shared utilities"
             }
         },
-        "recommendation": "Start with 'medium' for most cases. Use 'low' for quick checks, 'high' for thorough audits."
+        "recommendation": "Call report_update after every substantive change to track learning progress."
     }
 
 

@@ -1,12 +1,12 @@
 [project]
-name = "pax"
+name = "pax-report"
 version = "0.1.0"
-description = "MCP server for scanning local servers for security vulnerabilities"
+description = "MCP server for tracking development activity and generating personalized learning reports"
 authors = [{name = "Dhilan", email = "atx.dhilan@gmail.com"}]
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
-keywords = ["mcp", "security", "vulnerability-scanner", "ngrok"]
+keywords = ["mcp", "learning", "development-tracking", "tutorials"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -22,16 +22,10 @@ dependencies = [
   "requests",
   "pydantic",
   "python-dotenv",
-  "ngrok",
-  "crawl4ai",
-  "openai",
-  "fastapi",
-  "uvicorn",
-  "aiohttp",
 ]
 
 [project.scripts]
-pax-mcp = "server:main"
+pax-report-mcp = "server:main"
 
 [project.urls]
 Homepage = "https://github.com/gambitinc/pax"
