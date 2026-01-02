@@ -1,8 +1,10 @@
 # Pax Report
 
-MCP server that tracks your coding activity and generates personalized daily learning reports.
+Agentic development is dangerous, we're trying to fix that.
 
-Every meaningful interaction—writing code, fixing bugs, reviewing PRs, learning concepts—gets recorded and synthesized into a tutorial tailored to your skill level. The system learns what you know and adapts its explanations accordingly.
+Paxnet tracks your vibecoding activity and generates personalized daily learning reports.
+
+Every meaningful interaction — writing code, fixing bugs, designing infra — gets recorded and synthesized into a tutorial tailored to your skill level. The system learns what you know and adapts its explanations accordingly.
 
 ## Installation
 
