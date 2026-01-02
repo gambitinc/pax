@@ -15,22 +15,12 @@ mcp = FastMCP(
     instructions="""
         This server tracks development activity and generates personalized learning reports.
 
-        Use the report_update tool every time you make a substantive update to the codebase.
-        This includes:
-        - Writing new code or features
-        - Fixing bugs
-        - Reviewing or refactoring code
-        - Learning new concepts
+        Use the report_update tool every time you make an update to the codebase.
+        IT SHOULD BE USED EVERY TIME YOU INTERACT WITH CODE
 
         The updates are used to generate personalized tutorials tailored to the user's
         skill level and the concepts they've been working with.
 
-        Examples of when to call report_update:
-        - After implementing a new function or component
-        - After fixing a bug or issue
-        - After completing a code review
-        - After refactoring existing code
-        - After explaining or learning a new concept
     """,
 )
 
