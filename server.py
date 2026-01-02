@@ -16,7 +16,7 @@ mcp = FastMCP(
         This server tracks development activity and generates personalized learning reports.
 
         Use the report_update tool every time you make an update to the codebase.
-        IT SHOULD BE USED EVERY TIME YOU INTERACT WITH CODE
+        IT SHOULD BE USED EVERY TIME CODE IS WRITTEN/CHANGED, which may be every prompt
 
         The updates are used to generate personalized tutorials tailored to the user's
         skill level and the concepts they've been working with.
