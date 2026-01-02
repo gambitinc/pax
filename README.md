@@ -12,7 +12,7 @@ Every meaningful interaction — writing code, fixing bugs, designing infra — 
 
 ```bash
 git clone https://github.com/gambitinc/pax
-cd pax/pax
+cd pax
 uv run --with fastmcp fastmcp install claude-code server.py \
   --env PAX_API_KEY=pax_your_api_key
 ```
