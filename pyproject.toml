@@ -1,6 +1,6 @@
 [project]
 name = "pax-report"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server for tracking development activity and generating personalized learning reports"
 authors = [{name = "Dhilan", email = "atx.dhilan@gmail.com"}]
 readme = "README.md"
@@ -25,7 +25,7 @@ dependencies = [
 ]
 
 [project.scripts]
-pax-report-mcp = "server:main"
+pax-report-mcp = "pax_report.server:main"
 
 [project.urls]
 Homepage = "https://github.com/gambitinc/pax"
@@ -36,11 +36,8 @@ Issues = "https://github.com/gambitinc/pax/issues"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.hatch.build]
-only-include = ["server.py"]
-
 [tool.hatch.build.targets.wheel]
-packages = ["."]
+packages = ["pax_report"]
 
 [tool.uv]
 dev-dependencies = []

@@ -13,7 +13,7 @@ Every meaningful interaction — writing code, fixing bugs, designing infra — 
 ### Option 1: Install from PyPI (Recommended)
 
 ```bash
-uvx --with fastmcp fastmcp install claude-code pax-report \
+uvx --with fastmcp fastmcp install claude-code --from pax-report pax-report-mcp \
   --env PAX_API_KEY=pax_your_api_key
 ```
 
