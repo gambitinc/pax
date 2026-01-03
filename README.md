@@ -13,7 +13,11 @@ Every meaningful interaction — writing code, fixing bugs, designing infra — 
 ### Option 1: Install from PyPI (Recommended)
 
 ```bash
-uvx --with fastmcp fastmcp install claude-code --from pax-report pax-report-mcp \
+# Install the package first
+uv pip install pax-report
+
+# Then configure it with fastmcp
+uvx --with fastmcp fastmcp install claude-code pax-report \
   --env PAX_API_KEY=pax_your_api_key
 ```
 
@@ -21,7 +25,7 @@ uvx --with fastmcp fastmcp install claude-code --from pax-report pax-report-mcp 
 
 ```bash
 git clone https://github.com/gambitinc/pax
-cd pax
+cd pax/pax_report/
 uv run --with fastmcp fastmcp install claude-code server.py \
   --env PAX_API_KEY=pax_your_api_key
 ```
