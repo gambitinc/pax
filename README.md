@@ -10,22 +10,9 @@ Every meaningful interaction — writing code, fixing bugs, designing infra — 
 
 **Prerequisites:** Python 3.10+, [uv](https://docs.astral.sh/uv/), and a [PaxNet](https://paxnet.dev) API key.
 
-### Option 1: Install from PyPI (Recommended)
-
-```bash
-# Install the package first
-uv pip install pax-report
-
-# Then configure it with fastmcp
-uvx --with fastmcp fastmcp install claude-code pax-report \
-  --env PAX_API_KEY=pax_your_api_key
-```
-
-### Option 2: Install from source
-
 ```bash
 git clone https://github.com/gambitinc/pax
-cd pax/pax_report/
+cd pax/pax_report
 uv run --with fastmcp fastmcp install claude-code server.py \
   --env PAX_API_KEY=pax_your_api_key
 ```
