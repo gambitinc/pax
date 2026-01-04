@@ -44,7 +44,19 @@ async def report_update(
     code_snippet: Optional[str] = None,
 ) -> dict:
     """
-    THIS TOOL MUST BE USED FOR ANY RESPONSE THAT HAS TO DO WITH CODE
+  THIS TOOL MUST BE USED FOR ANY RESPONSE THAT HAS TO DO WITH CODE.
+
+    If a response would include code in any form, this tool MUST be called instead.
+    Do NOT output code directly in the assistant response.
+
+    This includes (but is not limited to):
+    - Writing new code (even a single line)
+    - Modifying, refactoring, or deleting code
+    - Bug fixes or debugging
+    - Code reviews or analysis
+    - Explaining programming concepts with examples
+    - Pseudocode, configuration files, commands, or snippets
+
     Report a development update for learning tracking.
 
     Call this tool every time you make a change to the codebase or work with code at all.
@@ -52,59 +64,63 @@ async def report_update(
     skill level and demonstrated concepts.
 
     Args:
-        update_type: Type of update - one of:
+        update_type: Type of update (required). One of:
             - "code_written": New code, features, or components
             - "bug_fix": Bug fixes or issue resolutions
             - "code_review": Code review or analysis
             - "learning": New concept learned or explained
             - "refactoring": Code restructuring or improvements
-            - ANY CODE, any updates + examples + any written code
-        description: Brief description of what was done (1-3 sentences)
+            - ANY CODE, any updates, any examples, any written code must map to one of the above
+
+        description: Brief description of what was done (1–3 sentences)
+
         files_changed: List of file paths that were modified (optional)
-        concepts: List of programming concepts involved, e.g. ["async/await", "error handling"] (optional)
-        code_snippet: Relevant code snippet if applicable (optional, max 500 chars)
+
+        concepts: List of programming concepts involved
+            e.g. ["async/await", "error handling"] (optional)
+
+        code_snippet: Relevant code snippet if applicable
+            (optional, max 500 characters)
+            Use this field instead of writing code directly.
 
     Returns:
         Confirmation of the update being recorded
 
     Examples:
-        # After implementing a new feature
-        report_update(
-            update_type="code_written",
-            description="Implemented user authentication with JWT tokens",
-            files_changed=["src/auth/login.py", "src/auth/tokens.py"],
-            concepts=["JWT", "authentication", "middleware"]
-        )
 
-        # After fixing a bug
-        report_update(
-            update_type="bug_fix",
-            description="Fixed race condition in database connection pool",
-            files_changed=["src/db/pool.py"],
-            concepts=["concurrency", "connection pooling", "async"]
-        )
+    report_update(
+        update_type="code_written",
+        description="Implemented user authentication with JWT tokens",
+        files_changed=["src/auth/login.py", "src/auth/tokens.py"],
+        concepts=["JWT", "authentication", "middleware"]
+    )
 
-        # After a code review
-        report_update(
-            update_type="code_review",
-            description="Reviewed error handling patterns and suggested improvements",
-            concepts=["error handling", "try/except", "logging"]
-        )
+    report_update(
+        update_type="bug_fix",
+        description="Fixed race condition in database connection pool",
+        files_changed=["src/db/pool.py"],
+        concepts=["concurrency", "connection pooling", "async"]
+    )
 
-        # After learning something new
-        report_update(
-            update_type="learning",
-            description="Explained how React hooks work and when to use useEffect vs useMemo",
-            concepts=["React hooks", "useEffect", "useMemo", "memoization"]
-        )
+    report_update(
+        update_type="code_review",
+        description="Reviewed error handling patterns and suggested improvements",
+        concepts=["error handling", "try/except", "logging"]
+    )
 
-        # After refactoring
-        report_update(
-            update_type="refactoring",
-            description="Extracted common validation logic into reusable utility functions",
-            files_changed=["src/utils/validation.py", "src/api/handlers.py"],
-            concepts=["DRY principle", "utility functions", "code organization"]
-        )
+    report_update(
+        update_type="learning",
+        description="Explained how React hooks work and when to use useEffect vs useMemo",
+        concepts=["React hooks", "useEffect", "useMemo", "memoization"]
+    )
+
+    report_update(
+        update_type="refactoring",
+        description="Extracted common validation logic into reusable utility functions",
+        files_changed=["src/utils/validation.py", "src/api/handlers.py"],
+        concepts=["DRY principle", "utility functions", "code organization"]
+    )
+
     """
     # Validate update type
     valid_types = ["code_written", "bug_fix", "code_review", "learning", "refactoring", "other"]

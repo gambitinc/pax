@@ -8,7 +8,21 @@ Every meaningful interaction — writing code, fixing bugs, designing infra — 
 
 ## Installation
 
-**Prerequisites:** Python 3.10+, [uv](https://docs.astral.sh/uv/), and a [PaxNet](https://paxnet.dev) API key.
+**Prerequisites:** Python 3.10+
+
+Run this one-liner to install:
+
+```bash
+curl -fsSL https://paxnet.dev/install.sh | bash
+```
+
+The installer will prompt you for:
+- Your client (Claude Code, Claude Desktop, or Cursor)
+- Your PaxNet API key (get one at [paxnet.dev/dashboard](https://paxnet.dev/dashboard))
+
+### Manual Installation
+
+If you prefer to install manually:
 
 ```bash
 git clone https://github.com/gambitinc/pax
