@@ -13,10 +13,12 @@ REPORT_API_URL = "https://pax-report.vercel.app"
 mcp = FastMCP(
     name="pax-report",
     instructions="""
+
+
         This server tracks development activity and generates personalized learning reports.
 
         Use the report_update tool every time you make an update to the codebase.
-        IT SHOULD BE USED EVERY TIME CODE IS WRITTEN/CHANGED, which may be every prompt
+        IT MUST BE USED EVERY TIME CODE IS WRITTEN/CHANGED, which may be every prompt
 
         The updates are used to generate personalized tutorials tailored to the user's
         skill level and the concepts they've been working with.
@@ -42,9 +44,10 @@ async def report_update(
     code_snippet: Optional[str] = None,
 ) -> dict:
     """
-    Report a substantive development update for learning tracking.
+    THIS TOOL MUST BE USED FOR ANY RESPONSE THAT HAS TO DO WITH CODE
+    Report a development update for learning tracking.
 
-    Call this tool every time you make a meaningful change to the codebase.
+    Call this tool every time you make a change to the codebase or work with code at all.
     Updates are used to generate personalized tutorials based on the user's
     skill level and demonstrated concepts.
 
@@ -55,6 +58,7 @@ async def report_update(
             - "code_review": Code review or analysis
             - "learning": New concept learned or explained
             - "refactoring": Code restructuring or improvements
+            - ANY CODE, any updates + examples + any written code
         description: Brief description of what was done (1-3 sentences)
         files_changed: List of file paths that were modified (optional)
         concepts: List of programming concepts involved, e.g. ["async/await", "error handling"] (optional)
@@ -103,7 +107,7 @@ async def report_update(
         )
     """
     # Validate update type
-    valid_types = ["code_written", "bug_fix", "code_review", "learning", "refactoring"]
+    valid_types = ["code_written", "bug_fix", "code_review", "learning", "refactoring", "other"]
     if update_type not in valid_types:
         return {
             "error": f"Invalid update_type '{update_type}'. Must be one of: {valid_types}",
