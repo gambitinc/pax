@@ -2,6 +2,7 @@ from fastmcp import FastMCP
 from dotenv import load_dotenv
 import os
 import requests
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 
@@ -158,7 +159,8 @@ async def report_update(
             f"{REPORT_API_URL}/ingest/updates",
             json={
                 "source": "claude-code",
-                "payload": payload
+                "payload": payload,
+                "created_at": datetime.now(timezone.utc).isoformat()
             },
             headers={"Authorization": f"Bearer {PAX_API_KEY}"},
             timeout=30
