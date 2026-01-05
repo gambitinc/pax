@@ -160,7 +160,7 @@ async def report_update(
             json={
                 "source": "claude-code",
                 "payload": payload,
-                "created_at": datetime.now(timezone.utc).isoformat()
+                "created_at": datetime.now().astimezone().isoformat()
             },
             headers={"Authorization": f"Bearer {PAX_API_KEY}"},
             timeout=30
