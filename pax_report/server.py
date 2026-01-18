@@ -155,12 +155,14 @@ async def report_update(
 
     try:
         # Call the report API
+        now = datetime.now().astimezone()
         response = requests.post(
             f"{REPORT_API_URL}/ingest/updates",
             json={
                 "source": "claude-code",
                 "payload": payload,
-                "created_at": datetime.now().astimezone().isoformat()
+                "created_at": now.isoformat(),
+                "local_date": now.date().isoformat()
             },
             headers={"Authorization": f"Bearer {PAX_API_KEY}"},
             timeout=30
@@ -236,6 +238,79 @@ async def get_update_types() -> dict:
         },
         "recommendation": "Call report_update after every substantive change to track learning progress."
     }
+
+
+@mcp.tool()
+async def get_refine_context(
+    topic: Optional[str] = None,
+) -> dict:
+    """
+    Get user proficiency context for refined, personalized advice.
+    
+    Call this tool before providing detailed guidance on a topic to calibrate 
+    your explanation depth based on the user's demonstrated skill level.
+    
+    Args:
+        topic: Optional topic to focus proficiency check on (e.g. "python", "security")
+    
+    Returns:
+        User's proficiency levels including:
+        - overall_level: "beginner", "intermediate", or "advanced"
+        - avg_confidence: 0-1 score of overall confidence
+        - concepts_by_category: breakdown of knowledge by area
+        - known_concepts: list of specific concepts the user knows
+        
+    Example usage:
+        Before explaining async/await, call get_refine_context(topic="asyncio")
+        to check if the user already understands coroutines.
+    """
+    try:
+        # Build request to refine API
+        request_body = {}
+        if topic:
+            request_body["concepts"] = [topic]
+            
+        response = requests.post(
+            f"{REPORT_API_URL}/refine/proficiency",
+            json=request_body,
+            headers={"Authorization": f"Bearer {PAX_API_KEY}"},
+            timeout=30
+        )
+
+        if response.status_code == 200:
+            result = response.json()
+            proficiency = result.get("proficiency", {})
+            
+            return {
+                "success": True,
+                "overall_level": proficiency.get("overall_level", "beginner"),
+                "avg_confidence": proficiency.get("avg_confidence", 0),
+                "description": proficiency.get("description", "New user"),
+                "concepts_by_category": proficiency.get("concepts_by_category", {}),
+                "known_concepts": proficiency.get("known_concepts", []),
+                "guidance": f"Tailor explanations for a {proficiency.get('overall_level', 'beginner')} developer."
+            }
+        elif response.status_code == 401:
+            return {
+                "error": "Authentication failed. Check your PAX_API_KEY.",
+                "status_code": response.status_code
+            }
+        else:
+            return {
+                "error": f"Failed to fetch proficiency: {response.text}",
+                "status_code": response.status_code
+            }
+
+    except requests.exceptions.Timeout:
+        return {
+            "error": "Request timed out while fetching proficiency.",
+            "fallback": "Assume intermediate level."
+        }
+    except Exception as e:
+        return {
+            "error": f"Error fetching proficiency: {str(e)}",
+            "fallback": "Assume intermediate level."
+        }
 
 
 def main():
