@@ -247,8 +247,8 @@ async def get_refine_context(
     """
     Get user proficiency context for refined, personalized advice.
     
-    Call this tool before providing detailed guidance on a topic to calibrate 
-    your explanation depth based on the user's demonstrated skill level.
+    Call this tool when designing implementation plans + general advice for users. This will help you 
+    give appropriate advice based on the user's demonstrated skill level. 
     
     Args:
         topic: Optional topic to focus proficiency check on (e.g. "python", "security")
