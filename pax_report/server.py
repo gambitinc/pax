@@ -16,13 +16,13 @@ mcp = FastMCP(
     instructions="""
 
 
-        This server tracks development activity and generates personalized learning reports.
+        This server tracks development activity and monitors AI usage quality.
 
         Use the report_update tool every time you make an update to the codebase.
         IT MUST BE USED EVERY TIME CODE IS WRITTEN/CHANGED, which may be every prompt
 
-        The updates are used to generate personalized tutorials tailored to the user's
-        skill level and the concepts they've been working with.
+        The updates are used to track AI collaboration patterns and generate
+        vibecode quality scores for team monitoring.
 
     """,
 )
@@ -43,6 +43,10 @@ async def report_update(
     files_changed: Optional[list[str]] = None,
     concepts: Optional[list[str]] = None,
     code_snippet: Optional[str] = None,
+    session_id: Optional[str] = None,
+    message_count: Optional[int] = None,
+    lines_changed: Optional[int] = None,
+    time_since_last_update: Optional[int] = None,
 ) -> dict:
     """
   THIS TOOL MUST BE USED FOR ANY RESPONSE THAT HAS TO DO WITH CODE.
@@ -58,7 +62,7 @@ async def report_update(
     - Explaining programming concepts with examples
     - Pseudocode, configuration files, commands, or snippets
 
-    Report a development update for learning tracking.
+    Report a development update for activity tracking.
 
     Call this tool every time you make a change to the codebase or work with code at all.
     Updates are used to generate personalized tutorials based on the user's
@@ -83,6 +87,18 @@ async def report_update(
         code_snippet: Relevant code snippet if applicable
             (optional, max 500 characters)
             Use this field instead of writing code directly.
+
+        session_id: A stable identifier for the current conversation/session (optional).
+            Helps track patterns across a coding session.
+
+        message_count: How many messages have been exchanged in this conversation so far (optional).
+            Helps assess depth of human-AI collaboration.
+
+        lines_changed: Estimated number of lines added or removed in this update (optional).
+            Helps detect large unreviewed changes.
+
+        time_since_last_update: Seconds since the last report_update call (optional).
+            Helps detect inactivity gaps.
 
     Returns:
         Confirmation of the update being recorded
@@ -153,17 +169,32 @@ async def report_update(
         # Truncate code snippet if too long
         payload["code_snippet"] = code_snippet[:500] if len(code_snippet) > 500 else code_snippet
 
+    # Build session context (only include non-None values)
+    session_context = {}
+    if session_id:
+        session_context["session_id"] = session_id
+    if message_count is not None:
+        session_context["message_count"] = message_count
+    if lines_changed is not None:
+        session_context["lines_changed"] = lines_changed
+    if time_since_last_update is not None:
+        session_context["time_since_last_update"] = time_since_last_update
+
     try:
         # Call the report API
         now = datetime.now().astimezone()
+        request_body = {
+            "source": "claude-code",
+            "payload": payload,
+            "created_at": now.isoformat(),
+            "local_date": now.date().isoformat()
+        }
+        if session_context:
+            request_body["session_context"] = session_context
+
         response = requests.post(
             f"{REPORT_API_URL}/ingest/updates",
-            json={
-                "source": "claude-code",
-                "payload": payload,
-                "created_at": now.isoformat(),
-                "local_date": now.date().isoformat()
-            },
+            json=request_body,
             headers={"Authorization": f"Bearer {PAX_API_KEY}"},
             timeout=30
         )
